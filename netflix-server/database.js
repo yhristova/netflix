@@ -2,7 +2,7 @@ import { Sequelize, DataTypes } from "sequelize";
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
-  host: "/Users/yoanahristova/work/projects/netflix-server/MOVIES",
+  host: "/Users/yoanahristova/work/projects/netflix/netflix-server/MOVIES",
 });
 
 export const Movie = sequelize.define("Movie", {
