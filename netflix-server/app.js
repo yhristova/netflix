@@ -27,6 +27,25 @@ app.post("/", jsonParser, async (req, res) => {
   }
 });
 
+app.delete("/:id", async (req, res) => {
+  try {
+    const isDeleted = await Movie.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    if (isDeleted) {
+      return res.send();
+    }
+
+    res.status(404);
+    res.send("Bad id");
+  } catch (err) {
+    console.log(err);
+    res.send("Bad data");
+  }
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
