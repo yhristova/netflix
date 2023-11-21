@@ -8,8 +8,13 @@ const port = 4000;
 var jsonParser = bodyParser.json();
 
 app.get("/", async (req, res) => {
-  const movie = await Movie.findAll();
-  res.send(movie);
+  try {
+    const movies = await Movie.findAll();
+    res.send(movies);
+  } catch (err) {
+    console.log(err);
+    res.send("Error");
+  }
 });
 
 app.post("/", jsonParser, async (req, res) => {
@@ -23,7 +28,8 @@ app.post("/", jsonParser, async (req, res) => {
     res.send(movie);
   } catch (err) {
     console.log(err);
-    res.send("Bad data");
+
+    res.send("Error");
   }
 });
 
@@ -42,7 +48,21 @@ app.delete("/:id", async (req, res) => {
     res.send("Bad id");
   } catch (err) {
     console.log(err);
-    res.send("Bad data");
+    res.send("Error");
+  }
+});
+
+app.get("/:id", async (req, res) => {
+  try {
+    const movie = await Movie.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+    res.send(movie);
+  } catch (err) {
+    console.log(err);
+    res.send("Error");
   }
 });
 
