@@ -1,8 +1,8 @@
-import { Sequelize, DataTypes } from "sequelize";
+import { Sequelize, DataTypes, } from "sequelize";
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
-  host: "/Users/yoanahristova/work/projects/netflix/netflix-server/MOVIES",
+  host: "/Users/yoanahristova/work/projects/netflix/netflix-server/netflixDB",
 });
 
 export const Movie = sequelize.define("Movie", {
@@ -23,5 +23,15 @@ export const Movie = sequelize.define("Movie", {
     type: DataTypes.STRING,
   },
 });
+
+export const User = sequelize.define("User", {
+  username: {
+    type: DataTypes.STRING,
+  },
+  password: {
+    type: DataTypes.STRING,
+    },
+  },
+);
 
 sequelize.sync();

@@ -27,7 +27,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://localhost:4000/"
+				"url": "http://localhost:4000/movies"
 			},
 			"response": []
 		},
@@ -69,16 +69,33 @@
 						}
 					}
 				},
-				"url": "http://localhost:4000/"
+				"url": "http://localhost:4000/movies"
 			},
 			"response": []
 		},
 		{
 			"name": "Delete movie by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"the endpoint returns the expected status code\", () => {",
+							"",
+							"    const expectedStatusCode = 200;",
+							"",
+							"",
+							"    pm.response.to.have.status(expectedStatusCode);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"url": "http://localhost:4000/3"
+				"url": "http://localhost:4000/movies/1"
 			},
 			"response": []
 		},
@@ -87,7 +104,58 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://localhost:4000/1"
+				"url": "http://localhost:4000/movies/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"misho\",\n    \"password\": \"54321\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:4000/register"
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"misho\",\n    \"password\": \"54321\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:4000/login"
+			},
+			"response": []
+		},
+		{
+			"name": "me",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoieW9hbmEiLCJpYXQiOjE3MDA3NDA5NTMsImV4cCI6MTcwMDc1MTc1M30.wg-h-j4vaOLD4TanYjwymbvZI9kiL9o7n_oVJx1rvbU",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:4000/me"
 			},
 			"response": []
 		}
