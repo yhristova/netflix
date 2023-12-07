@@ -47,10 +47,9 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.expect(\"endpoint returns the expected status code\", () => {",
-							"    const expectedStatusCode = [201]",
+							"pm.expect(\"the endpoint returns the expected status code\", () => {",
 							"",
-							"    pm.respone.to.have.status(expectedStatusCode)",
+							"    pm.respone.to.have.status(201)",
 							"})"
 						],
 						"type": "text/javascript"
@@ -82,10 +81,7 @@
 						"exec": [
 							"pm.test(\"the endpoint returns the expected status code\", () => {",
 							"",
-							"    const expectedStatusCode = 200;",
-							"",
-							"",
-							"    pm.response.to.have.status(expectedStatusCode);",
+							"    pm.response.to.have.status(200);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -101,6 +97,20 @@
 		},
 		{
 			"name": "Get movie by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"the endpoint returns the expected status code\", () => {",
+							"    expectedStatusCode = 200;",
+							"    pm.response.to.have.status(expectedStatusCode);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -110,6 +120,20 @@
 		},
 		{
 			"name": "Register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"the endpoint returns the expected status code\", () => {",
+							"    pm.response.to.have.status(201);",
+							"})",
+							"    "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -128,6 +152,20 @@
 		},
 		{
 			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"the endpoint returns the expected status code\", () => {",
+							"    pm.response.to.have.status(200);",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -146,16 +184,176 @@
 		},
 		{
 			"name": "me",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"the endpoint returns the expected status code\", () => {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoieW9hbmEiLCJpYXQiOjE3MDA3NDA5NTMsImV4cCI6MTcwMDc1MTc1M30.wg-h-j4vaOLD4TanYjwymbvZI9kiL9o7n_oVJx1rvbU",
+						"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoieW9hbmEiLCJpYXQiOjE3MDEzMzI3MDcsImV4cCI6MTcwMTM0MzUwN30.wNvxoGgeqvu2mfelRt-kGhjgkCp9yhayXNOJh-_x-0c",
 						"type": "text"
 					}
 				],
 				"url": "http://localhost:4000/me"
+			},
+			"response": []
+		},
+		{
+			"name": "Invalid url",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Invalid url\", () => {",
+							"    pm.response.to.have.status(404).to.have.body({\"msg\": \"page not found\"});",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:4000/foo"
+			},
+			"response": []
+		},
+		{
+			"name": "No authorization token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"No authorization token\", () => {",
+							"    pm.response.to.have.status(401).to.have.body({\"msg\":\"need a token\"})",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:4000/me"
+			},
+			"response": []
+		},
+		{
+			"name": "Unauthorized",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Unauthorized\", () => {",
+							"    pm.response.to.have.status(401).to.have.body({\"message\": \"bad token\"})",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer 12345",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:4000/me"
+			},
+			"response": []
+		},
+		{
+			"name": "Get movie by wrong id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"The movie id is not found\", () => {",
+							"    pm.response.to.have.status(404).to.have.body(\"Movie not found\")",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:4000/movies/8"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete movie by wrong id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"The movie id is not found\", () => {",
+							"    pm.response.to.have.status(404).to.have.body(\"Bad id\")",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:4000/movies/8"
+			},
+			"response": []
+		},
+		{
+			"name": "Login with wrong password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Incorrect password\", () => {",
+							"    pm.response.to.have.status(401).to.have.body({\"msg\": \"Incorrect password\"})",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"misho\",\n    \"password\": \"543216\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:4000/login"
 			},
 			"response": []
 		}

@@ -113,31 +113,35 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash(password, salt);
-
   try {
-    const user = await User.findOne({ username });
-    if (!user) {
-      res.status(400).json({ msg: "User not exist" });
-    }
-    bcrypt.compare(password, hashedPassword, (err, data) => {
-      if (data) {
-        const token = jwt.sign(
-          {
-            sub: user.id,
-            username: user.username,
-          },
-          SECRET,
-          { expiresIn: "3 hours" }
-        );
-        return res.json({ access_token: token });
-      }
-
-      res.status(401).json({ msg: "Invalid credentials" });
+    const user = await User.findOne({
+      where: {
+        username: req.body.username,
+      },
     });
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    const passwordValid = bcrypt.compare(
+      req.body.password,
+      user.password,
+      (err, data) => {
+        if (err) {
+          return res.status(400).json({ msg: "Error" });
+        }
+        if (!data) {
+          return res.status(401).json({ msg: "Incorrect password" });
+        }
+        const token = jwt.sign(
+          { id: user.id, username: user.username },
+          SECRET,
+          {
+            expiresIn: "3 hours",
+          }
+        );
+        res.status(200).json({ token: token });
+      }
+    );
   } catch (err) {
     console.log(err);
     res.send("Error");
