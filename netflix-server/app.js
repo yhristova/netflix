@@ -4,22 +4,21 @@ import bcrypt from "bcrypt";
 import { User } from "./database.js";
 import { Movie } from "./database.js";
 
-const app = express();
+export const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const port = 4000;
 const SECRET = "my-secret";
 
-const extractBearerToken = (headerValue) => {
+export const extractBearerToken = (headerValue) => {
   if (typeof headerValue !== "string") {
-    false;
+    return false;
   }
   const matches = headerValue.match(/(bearer)\s+(\S+)/i);
-
-  return matches[0] && matches[2];
+  return matches && matches[2];
 };
 
-const checkTokenMiddleware = (req, res, next) => {
+export const checkTokenMiddleware = (req, res, next) => {
   const token =
     req.headers.authorization && extractBearerToken(req.headers.authorization);
 
@@ -29,10 +28,15 @@ const checkTokenMiddleware = (req, res, next) => {
 
   jwt.verify(token, SECRET, (err, decodedToken) => {
     if (err) {
-      return res.status(401).json({ message: "bad token" });
+      return res.status(401).json({ msg: "bad token" });
     }
   });
   next();
+};
+
+export const createToken = (data) => {
+  const options = { expiresIn: "1h" };
+  return jwt.sign(data, SECRET, options);
 };
 
 app.get("/movies", async (req, res) => {
@@ -132,14 +136,10 @@ app.post("/login", async (req, res) => {
         if (!data) {
           return res.status(401).json({ msg: "Incorrect password" });
         }
-        const token = jwt.sign(
-          { id: user.id, username: user.username },
-          SECRET,
-          {
-            expiresIn: "3 hours",
-          }
-        );
-        res.status(200).json({ token: token });
+
+        return res.status(200).json({
+          token: createToken({ id: user.id, username: user.username }),
+        });
       }
     );
   } catch (err) {
@@ -165,6 +165,6 @@ app.get("*", (req, res) => {
   res.status(404).json({ msg: "page not found" });
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Example app listening on port ${port}`);
+// });

@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes, } from "sequelize";
+import { Sequelize, DataTypes } from "sequelize";
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -30,8 +30,7 @@ export const User = sequelize.define("User", {
   },
   password: {
     type: DataTypes.STRING,
-    },
   },
-);
+});
 
-sequelize.sync();
+// sequelize.sync();
