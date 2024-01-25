@@ -73,9 +73,8 @@ app.delete("/movies/:id", async (req, res) => {
       },
     });
     if (isDeleted) {
-      return res.status(200).send("Movie is deleted");
-    } else res.status(404);
-    res.send("Bad id");
+      return res.status(200).json({ msg: "Movie is deleted" });
+    } else res.status(404).json({ msg: "Bad id" });
   } catch (err) {
     console.log(err);
     res.send("Error");
@@ -90,7 +89,7 @@ app.get("/movies/:id", async (req, res) => {
       },
     });
     if (!movie) {
-      return res.status(404).send("Movie not found");
+      return res.status(404).json({ msg: "Movie not found" });
     }
     return res.send(movie);
   } catch (err) {
@@ -108,8 +107,9 @@ app.post("/register", async (req, res) => {
       username: data.username,
       password: hashedPassword,
     });
-    res.status(201);
-    res.send(newUser);
+    if (data.username && hashedPassword) {
+      res.status(201).json({ msg: "Registration complete" });
+    } else res.status(400).json({ msg: "Both fields required" });
   } catch (err) {
     console.log(err);
     res.send("Error");
@@ -131,7 +131,7 @@ app.post("/login", async (req, res) => {
       user.password,
       (err, data) => {
         if (err) {
-          return res.status(400).json({ msg: "Error" });
+          return res.status(400).json({ msg: "Bad Request" });
         }
         if (!data) {
           return res.status(401).json({ msg: "Incorrect password" });
@@ -142,6 +142,16 @@ app.post("/login", async (req, res) => {
         });
       }
     );
+  } catch (err) {
+    console.log(err);
+    res.send("Error");
+  }
+});
+
+app.get("/login", async (req, res) => {
+  try {
+    const users = await User.findAll();
+    res.status(200).send(users);
   } catch (err) {
     console.log(err);
     res.send("Error");
@@ -165,6 +175,6 @@ app.get("*", (req, res) => {
   res.status(404).json({ msg: "page not found" });
 });
 
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`);
-// });
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
